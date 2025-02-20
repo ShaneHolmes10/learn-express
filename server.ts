@@ -58,6 +58,9 @@ app.use(cors({ origin: 'http://localhost:3000' }));
 // adds the middleware function to the GET route
 app.use('/read/usernames', addMsgToRequest);
 
+app.get('/', (req: Request, res: Response) => { res.send('Hello World!'); });
+
+
 // GET route that returns a list of usernames
 app.get('/read/usernames', (req: UserRequest, res: Response) => {
   let usernames = req.users?.map((user) => {
@@ -65,6 +68,23 @@ app.get('/read/usernames', (req: UserRequest, res: Response) => {
   });
   res.send(usernames);
 });
+
+
+app.use('/read/username', addMsgToRequest);
+
+// a route that sends the usernames of the users to the client
+app.get('/read/username/:name', (req: UserRequest, res: Response) => {
+
+  const username = req.params.name;
+  const user = req.users?.find(user => user.username === username);
+  
+  if (user) {
+    res.send([user.email]);
+  } else {
+    res.status(404).send({ error: 'User not found' });
+  }
+});
+
 
 // middleware function that parses the request body to json
 app.use(express.json());

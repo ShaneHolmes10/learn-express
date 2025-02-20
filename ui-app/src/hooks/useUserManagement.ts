@@ -57,7 +57,9 @@ export const useUserManagement = () => {
   const handleShowEmail = async () => {
     try {
       const response = await axios.get<EmailResponse[]>(`http://localhost:8000/read/username/${searchUsername}`);
+      
       const data = response.data;
+      
       if (data.length > 0) {
         setSearchEmail(data);
       } else {
