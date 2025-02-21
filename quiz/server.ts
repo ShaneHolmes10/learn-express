@@ -3,6 +3,7 @@ import path from 'path';
 import express, { Express, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 
+
 /**
  * A type that represents a user object
  */
@@ -59,15 +60,17 @@ const addMsgToRequest = (req: UserRequest, res: Response, next: NextFunction) =>
 
 // a middleware function the verifies the origin of the request using a cors package
 app.use(cors({ origin: 'http://localhost:3000' }));
+
 // adds the middleware function to the application
 app.use('/read/usernames', addMsgToRequest);
 
-app.get('/', (req: Request, res: Response) => { res.send('Hello World!'); });
-
-
+app.get('/read/usernames', (req: UserRequest, res: Response) => {
+  let usernames = req.users?.map((user) => {
+    return { id: user.id, username: user.username };
+  });
+  res.send(usernames);
+});
 app.use('/read/username', addMsgToRequest);
-
-
 // a route that sends the usernames of the users to the client
 app.get('/read/username/:name', (req: UserRequest, res: Response) => {
 
@@ -75,7 +78,7 @@ app.get('/read/username/:name', (req: UserRequest, res: Response) => {
   const user = req.users?.find(user => user.username === username);
   
   if (user) {
-    res.send([user.email]);
+    res.send([{email: user?.email}]);
   } else {
     res.status(404).send({ error: 'User not found' });
   }

@@ -61,12 +61,17 @@ app.use('/read/usernames', addMsgToRequest);
 app.get('/', (req: Request, res: Response) => { res.send('Hello World!'); });
 
 
-// GET route that returns a list of usernames
-app.get('/read/usernames', (req: UserRequest, res: Response) => {
-  let usernames = req.users?.map((user) => {
-    return { id: user.id, username: user.username };
-  });
-  res.send(usernames);
+// a route that sends the usernames of the users to the client
+app.get('/read/username/:name', (req: UserRequest, res: Response) => {
+
+  const username = req.params.name;
+  const user = req.users?.find(user => user.username === username);
+  
+  if (user) {
+    res.send([user.email]);
+  } else {
+    res.status(404).send({ error: 'User not found' });
+  }
 });
 
 
